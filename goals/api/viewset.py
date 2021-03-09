@@ -5,6 +5,15 @@ from goals.models import Goal
 
 
 class GoalViewSet(ModelViewSet):
-        queryset = Goal.objects.all()
         serializer_class = GoalSerializer
         permission_classes = [IsAuthenticatedOrReadOnly]
+
+        def get_queryset(self):
+                group = self.request.query_params.get('group')
+
+                queryset = Goal.objects.all()
+
+                if group:
+                   queryset = queryset.filter(group_id=group)
+
+                return queryset
