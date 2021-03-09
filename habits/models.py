@@ -7,7 +7,8 @@ class Habit(models.Model):
     category = models.CharField(max_length=150)
     difficulty = models.CharField(max_length=150)
     frequency = models.CharField(max_length=150)
-    achieved = models.IntegerField()
+    achieved = models.BooleanField(default=False)
+    how_much_achieved = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
