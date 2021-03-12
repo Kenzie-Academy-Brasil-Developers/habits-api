@@ -1,3 +1,5 @@
+import ipdb
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 from groups.models import Group
@@ -27,9 +29,14 @@ class GroupViewSet(ModelViewSet):
     # POST /groups/1/subscribe
     @action(methods=['POST'], detail=True)
     def subscribe(self, request, pk=None):
-        request.user.group_id = pk
-        request.user.save()
+        try:
+            group = Group.objects.get(id=pk)
+            request.user.group_id = pk
+            request.user.save()
 
-        user = UserSerializer(request.user)
+            user = UserSerializer(request.user)
 
-        return Response({'message': 'User inserted on group', 'user': user.data})
+            return Response({'message': 'User inserted on group', 'user': user.data})
+
+        except:
+            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
