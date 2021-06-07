@@ -1,3 +1,4 @@
+from rest_framework.generics import get_object_or_404
 from users.models import User
 import ipdb
 from rest_framework import serializers, status
@@ -59,21 +60,26 @@ class GroupViewSet(ModelViewSet):
         return Response(serializer.data)
 
     # POST /groups/1/subscribe
-
     @action(methods=['POST'], detail=True)
     def subscribe(self, request, pk=None):
-        try:
-            group = Group.objects.get(id=pk)
-            group.users_on_group.add(request.user.id)
 
-            group.save()
+        user_group = Group.objects.filter(
+            id=pk,
+            users_on_group__id=request.user.id
+        ).first()
 
-            user = UserSerializer(request.user)
+        if user_group:
+            return Response({'message': 'User already on group'}, status=status.HTTP_401_UNAUTHORIZED)
 
-            return Response({'message': 'User inserted on group', 'user': user.data})
+        group = get_object_or_404(Group, pk=pk)
 
-        except:
-            return Response({'message': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
+        group.users_on_group.add(request.user.id)
+
+        group.save()
+
+        user = UserSerializer(request.user)
+
+        return Response({'message': 'User inserted on group', 'user': user.data})
 
     @action(methods=['GET'], detail=False)
     def subscriptions(self, request):
