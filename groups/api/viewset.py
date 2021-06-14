@@ -81,6 +81,28 @@ class GroupViewSet(ModelViewSet):
 
         return Response({'message': 'User inserted on group', 'user': user.data})
 
+        # DELETE /groups/1/unsubscribe
+    @action(methods=['DELETE'], detail=True)
+    def unsubscribe(self, request, pk=None):
+
+        user_group = Group.objects.filter(
+            id=pk,
+            users_on_group__id=request.user.id
+        ).first()
+
+        if not user_group:
+            return Response({'message': 'User not on group'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        group = get_object_or_404(Group, pk=pk)
+
+        group.users_on_group.remove(request.user.id)
+
+        group.save()
+
+        user = UserSerializer(request.user)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(methods=['GET'], detail=False)
     def subscriptions(self, request):
 
