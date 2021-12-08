@@ -148,7 +148,7 @@ Os erros são descritos por campo, com cada uma de suas especificações. Nessa 
 
 ```json
 {
-  "email": "johndoe@email.com",
+  "username": "johndoe",
   "password": "123456"
 }
 ```
