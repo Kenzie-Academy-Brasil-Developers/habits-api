@@ -1089,7 +1089,7 @@ Tentando atualizar uma atividade que não existe
 }
 ```
 
-<h2> Deletar uma atividade <h2>
+<h2> Deletar uma atividade </h2>
 
 Para deletar uma atividade, basta fazer um DELETE usando o id dela.
 
